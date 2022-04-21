@@ -51,14 +51,14 @@ public class HospitalSetController {
     }
 
     //分页条件查询
-    @PostMapping("/findPageHospSet/{page}/{pageSize}")
-    public Result findPageHospSet(@PathVariable int page,
-                                  @PathVariable int pageSize,
+    @PostMapping("/findPageHospSet/{current}/{limit}")
+    public Result findPageHospSet(@PathVariable int current,
+                                  @PathVariable int limit,
                                   @RequestBody(required = false) HospitalSetQueryVo hospitalSetQueryVo){
 
-        log.info("page = {},pageSize = {},hospitalSetQueryVo = {}" ,page,pageSize,hospitalSetQueryVo.toString());
+        log.info("page = {},pageSize = {},hospitalSetQueryVo = {}" ,current,limit,hospitalSetQueryVo.toString());
 
-        Page<HospitalSet> voPage = new Page<HospitalSet>(page,pageSize);
+        Page<HospitalSet> voPage = new Page<HospitalSet>(current,limit);
 
         String hosname = hospitalSetQueryVo.getHosname();
 
@@ -99,7 +99,7 @@ public class HospitalSetController {
     }
 
     //根据ID查询
-    @GetMapping("/findById/{id}")
+    @GetMapping("/getHospSet/{id}")
     public Result findById(@PathVariable Long id){
 
         log.info("id = {}", id);
@@ -115,7 +115,7 @@ public class HospitalSetController {
     }
 
     //修改
-    @PutMapping("/update")
+    @PutMapping("/updateHospitalSet")
     public Result update(@RequestBody HospitalSet hospitalSet){
 
         log.info("修改，医院信息：{}", hospitalSet.toString());
@@ -131,7 +131,7 @@ public class HospitalSetController {
     }
 
     //批量删除
-    @DeleteMapping("/deleteByIds")
+    @DeleteMapping("/batchRemove")
     public Result deleteByIds(@RequestParam List<Long> ids){
 
         log.info("ids = {}", ids);
@@ -147,7 +147,7 @@ public class HospitalSetController {
     }
 
     //锁定和解锁
-    @PutMapping("/lock/{id}/{status}")
+    @PutMapping("/lockHospitalSet/{id}/{status}")
     public Result lock(@PathVariable Long id,
                        @PathVariable Integer status){
 
@@ -161,7 +161,14 @@ public class HospitalSetController {
     }
 
     //发送签名密钥
-
+    @PutMapping("sendKey/{id}")
+    public Result lockHospitalSet(@PathVariable Long id) {
+        HospitalSet hospitalSet = hospitalSetService.getById(id);
+        String signKey = hospitalSet.getSignKey();
+        String hoscode = hospitalSet.getHoscode();
+        //TODO 发送短信
+        return Result.ok();
+    }
 
 }
 
